@@ -1,70 +1,83 @@
-# Getting Started with Create React App
+Name: Anvi Aggarwal
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Email: anviaggarwal13@gmail.com
 
-## Available Scripts
+Registration No: 12016188
 
-In the project directory, you can run:
+Project Link- https://ttt-assignment-seven.vercel.app/
 
-### `npm start`
+First, we create a submit button that is displayed first time the page loads.
+On clicking the button it callls the event handler handleClick where we fetch our API from the URL https://www.terriblytinytales.com/test.txt using fetch().
+The useState() hook is used to keep track of state of data present in the API and update it. It taked two parameters- data and setData.
+```
+const[data, setData] =useState("");
+```
+Here, setData is updated
+```
+const handleClick = () =>{
+    fetch('https://www.terriblytinytales.com/test.txt')
+    .then(response=>response.text())
+    .then(data=>{
+      setData(data);
+```
+To parse the content of the file, we use split(' ') to separate words by spaces.
+```
+const words = data.split(' ');
+```
+To find frequency of occurence of each wrod, we use the reduce() function.
+The reduce() function initializes an empty object as the accumulator ({}) and for each word, it increments the frequency count in the accumulator object.
+(init[word] || 0) retrieves the current frequency count or 0 if the word is encountered for the first time.
+Finally, (init[word] || 0) + 1 increments the frequency count by 1 for each occurrence of the word.
+```
+const frequency = words.reduce((init, word)=>{
+        init[word]=(init[word] || 0)+1;
+        return init;
+      },{});
+```
+To filter the top 20 most frequently occurring words, we use Object.entries() and sort the data in descendingorder on the basis of its frequency of occurrence.
+Then we use slice() function to separate out the first 20 items from the list.
+```
+const sort= Object.entries(frequency).sort((a,b)=> b[1]-a[1]);
+      const top20 = sort.slice(0, 20).map(([word])=>word);
+      setHead(top20);
+```
+Now, to create a histogram we use the Recharts library in React and create state variable for Histogram data
+```
+const[histogram, setHistogram] = useState([]); 
+```
+Then we create a function generateData() to generate data for the histogram whihc maps over the list of top words taking two parameters word and its frequency
+```
+ const generateData = (top, freq) =>{
+    const data = top.map(word=>({
+      word, frequency: freq[word],
+    }));
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+    setHistogram(data);
+  }
+```
+Then we render the Recharts Component
+```
+<BarChart width={800} height={400} data={histogram}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="word" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="frequency" fill="#088f8f"></Bar>
+     </BarChart>
+```
+After this we create a button to export/download a csv file. To do that we use the CSVLInk component of react-csv library. It allows us to generate a CSV file and provide it for download.  
+Create a variable csvData which is an array of objects representing the word and frequency data for the histogram.
+```
+const csvData=top.map(word=>({
+    Word:word,
+    Frequency:freq[word],
+   }));
+```
+Add the CSVLink component within the component's JSX, passing the csvData array as the data prop. You can specify the desired filename for the exported CSV file using the filename prop.
+Add a button inside the CSVLink component to trigger the download when clicked.
+```
+  <CSVLink data={csvData} filename="histogram_data.csv">
+      <button id="export">Export CSV</button>
+     </CSVLink>
+```
