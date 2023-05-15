@@ -1,5 +1,9 @@
 .App {
   text-align: center;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  display: flex;
 }
 
 .App-logo {
@@ -36,3 +40,27 @@
     transform: rotate(360deg);
   }
 }
+
+#submit{
+  background-color: rgb(0, 74, 20);
+  color: white;
+  height: 40px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+#export{
+  background-color: rgb(0, 12, 65);
+  color: white;
+  height: 40px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  top: 80px;
+  left: 750px;
+  position: absolute;
+}
+
